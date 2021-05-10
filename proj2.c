@@ -1,25 +1,40 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "auxiliary.h"
+#include "commands.h"
 
 
 int main() {
 
-    char *command;
+    char *command = read_input(NO_SPACING);
+    
+    while (strcmp(command, COMMAND_QUIT)) {
+ 
+        if (strcmp(command, COMMAND_HELP) == 0)
+            handle_command_help();
 
-
-    while ((command = read_input()) != 0) {
-
-        if (strcmp(command, "help") == 0)
-            printf("%s", "HELP!");
-
-        else if (strcmp(command, "quit") == 0)
+        else if (strcmp(command, COMMAND_SET) == 0)
             break;
 
+        else if (strcmp(command, COMMAND_PRINT) == 0)
+            break;
+
+        else if (strcmp(command, COMMAND_FIND) == 0)
+            break;
+
+        else if (strcmp(command, COMMAND_LIST) == 0)
+            break;
+
+        else if (strcmp(command, COMMAND_SEARCH) == 0)
+            break;
         
+        else if (strcmp(command, COMMAND_DELETE) == 0)
+            break;
 
         free(command);
+        command = read_input(NO_SPACING);
     }
 
     free(command);
