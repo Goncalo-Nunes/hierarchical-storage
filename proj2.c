@@ -3,12 +3,13 @@
 #include <string.h>
 
 #include "auxiliary.h"
-#include "commands.h"
+
 
 
 int main() {
 
     char *command = read_input(NO_SPACING);
+    Node *root = init_tree();
     
     while (strcmp(command, COMMAND_QUIT)) {
  
@@ -16,7 +17,7 @@ int main() {
             handle_command_help();
 
         else if (strcmp(command, COMMAND_SET) == 0)
-            break;
+            handle_command_set(root);
 
         else if (strcmp(command, COMMAND_PRINT) == 0)
             break;

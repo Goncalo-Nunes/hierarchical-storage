@@ -25,9 +25,9 @@ char *read_input(char end_char) {
         }
     }
 
-    if (c != '\n')
-        clear_line();
-
+    /*  if (c != '\n')
+        clear_line(); 
+    */
     string[i++] = '\0';
     string = safe_realloc(string, i);
     return string;
@@ -57,5 +57,9 @@ char *safe_realloc(void *ptr, int size) {
 /* Reads the remainder of the user's input that was not stored in memory
 because it was not relevant. */
 void clear_line() {
-    while(getchar() != '\n');
+    char c;
+    while((c = getchar()) != '\n' && c != ' ');
 }
+
+
+
