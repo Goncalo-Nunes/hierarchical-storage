@@ -69,12 +69,18 @@ char *safe_realloc(void *ptr, int size);
 void clear_line();
 
 
+Directory initialize_directory_name(Directory directory, char *name);
+Directory initialize_directory_value(Directory directory, char *value);
+Directory initialize_directory(Directory directory, char *name, char *value);
+Directory change_directory_value(Directory directory, char *value);
+
 Node *init_tree();
 Node *new_node(Directory directory);
 Node *insert_sibling(Node *node, Directory directory);
 Node *insert_child(Node *node, Directory directory);
 void print_tree(Node *tree);
 void *create_node_with_path(Node *root, char *path);
+void printTreeRecursive(Node *node);
 
 void handle_command_help();
 void handle_command_set(Node *root);

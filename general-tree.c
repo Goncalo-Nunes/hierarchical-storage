@@ -5,8 +5,7 @@ Node *init_tree() {
     Directory directory;
     Node *node;
 
-    directory.name = malloc(sizeof(char) * 2);
-    strcpy(directory.name, "/");
+    directory = initialize_directory(directory, "/", "\0");
 
     return node = new_node(directory);
 }
@@ -68,7 +67,7 @@ void print_tree(Node *tree)
 		fprintf(stderr, "\n%s--", tree->directory.name);
 		print_tree(tree->nextSibling);
 	}
-	if(!(tree->firstChild) && !(tree->nextSibling)){
+    if(!(tree->firstChild) && !(tree->nextSibling)){
 		fprintf(stderr, "%s", tree->directory.name);
 	}
 }
@@ -102,8 +101,7 @@ void *create_node_with_path(Node *root, char *path) {
             node = tempNode;
         
         else {
-            directory.name = malloc((strlen(word) + 1) * sizeof(char));
-            strcpy(directory.name, word);
+            directory = initialize_directory(directory, word, "\0");
             node = insert_child(node, directory);
 
         }
@@ -112,4 +110,20 @@ void *create_node_with_path(Node *root, char *path) {
     }
     
     return node;
+}
+
+
+
+void printTreeRecursive(Node *node) {
+
+    while (node != NULL) {        
+        /* If the node has a value, print the node */
+        if (node->directory.value[0] != '\0')
+            printf("%s\n", node->directory.name);
+
+        if (node->firstChild != NULL)
+            printTreeRecursive(node->firstChild);
+
+        node = node->nextSibling;
+    }
 }

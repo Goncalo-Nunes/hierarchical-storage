@@ -13,6 +13,7 @@ void handle_command_help() {
 }
 
 
+
 void handle_command_set(Node *root) {
     Node *node;
     char *path = read_input(NO_SPACING);
@@ -22,8 +23,10 @@ void handle_command_set(Node *root) {
 
     /* Set the value of the node's directory value to the one inserted by the user. */
     value = read_input(SPACING);
-    node->directory.value = malloc((strlen(value) + 1) * sizeof(char));
-    strcpy(node->directory.value, value);
+    node->directory = change_directory_value(node->directory, value);
+
+    printTreeRecursive(root);
+
 
     free(path);
     free(value);

@@ -43,7 +43,7 @@ void check_memory(void *memory) {
     }
 }
 
-/* Reallocates memory based on the given pointer ans size. If this operation
+/* Reallocates memory based on the given pointer and size. If this operation
 is not possible prints an error message and exists the program. */
 char *safe_realloc(void *ptr, int size) {
   void *newPtr = realloc(ptr, size);
