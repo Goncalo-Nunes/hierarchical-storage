@@ -3,7 +3,7 @@
 /* Reads de user's input and returns a pointer to the inserted 
 input based on the argument. The argument indicates the final character to read.*/
 char *read_input(char end_char) {
-    int size = 8, i = 0, flag = NO_CHAR_FOUND;
+    int size = 64, i = 0, flag = NO_CHAR_FOUND;
     char c = '_';
     char* string = malloc(size * sizeof(char));
     check_memory(string);
@@ -60,6 +60,4 @@ void clear_line() {
     char c;
     while((c = getchar()) != '\n' && c != ' ');
 }
-
-
 

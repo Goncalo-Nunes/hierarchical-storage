@@ -20,16 +20,16 @@ int main() {
             handle_command_set(root);
 
         else if (strcmp(command, COMMAND_PRINT) == 0)
-            break;
+            handle_command_print(root);
 
         else if (strcmp(command, COMMAND_FIND) == 0)
-            break;
+            handle_command_find(root);
 
         else if (strcmp(command, COMMAND_LIST) == 0)
             break;
 
         else if (strcmp(command, COMMAND_SEARCH) == 0)
-            break;
+            handle_command_search(root);
         
         else if (strcmp(command, COMMAND_DELETE) == 0)
             break;

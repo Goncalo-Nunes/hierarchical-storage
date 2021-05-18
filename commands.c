@@ -25,9 +25,43 @@ void handle_command_set(Node *root) {
     value = read_input(SPACING);
     node->directory = change_directory_value(node->directory, value);
 
-    printTreeRecursive(root);
-
-
     free(path);
     free(value);
+}
+
+
+
+void handle_command_print(Node *root) {
+    print_nodes_with_value(root);
+}
+
+
+
+void handle_command_find(Node *root) {
+    Node *node;
+    char *path = read_input(NO_SPACING);
+
+    node = find_node(root, path);
+
+    if(node != NULL) {
+        if (node->directory.value[0] == '\0')
+            puts(ERROR_NO_DATA);
+        else
+            puts(node->directory.value);
+    }
+} 
+
+
+
+void handle_command_search(Node *root) {
+    Node *node;
+    char *value = read_input(SPACING);
+
+    node = search_value(root, value);
+
+    if (node == NULL)
+        puts(ERROR_NOT_FOUND);
+    else 
+        puts(node->directory.name);
+    
 }

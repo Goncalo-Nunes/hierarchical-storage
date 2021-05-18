@@ -26,7 +26,7 @@ indicating that spaces are not allowed. */
 #define COMMAND_LIST "list" /* Command 'List' string */
 #define COMMAND_SEARCH "search" /* Command 'Search' string */
 #define COMMAND_DELETE "delete" /* Command 'Delete' string */
-#define COMMAND_HELP_DESCRIPTION "Imprime os comandos disponiveis."
+#define COMMAND_HELP_DESCRIPTION "Imprime os comandos disponíveis."
 #define COMMAND_QUIT_DESCRIPTION "Termina o programa."
 #define COMMAND_SET_DESCRIPTION "Adiciona ou modifica o valor a armazenar."
 #define COMMAND_PRINT_DESCRIPTION "Imprime todos os caminhos e valores."
@@ -35,7 +35,8 @@ indicating that spaces are not allowed. */
 #define COMMAND_SEARCH_DESCRIPTION "Procura o caminho dado um valor."
 #define COMMAND_DELETE_DESCRIPTION "Apaga um caminho e todos os subcaminhos."
 
-
+#define ERROR_NOT_FOUND "not found"
+#define ERROR_NO_DATA "no data"
 
 /* Structures */
 
@@ -67,6 +68,7 @@ char *read_input(char end_char);
 void check_memory(void *memory);
 char *safe_realloc(void *ptr, int size);
 void clear_line();
+char *concatenate(const char *string1, const char *string2);
 
 
 Directory initialize_directory_name(Directory directory, char *name);
@@ -80,9 +82,19 @@ Node *insert_sibling(Node *node, Directory directory);
 Node *insert_child(Node *node, Directory directory);
 void print_tree(Node *tree);
 void *create_node_with_path(Node *root, char *path);
-void printTreeRecursive(Node *node);
+void print_nodes_with_value(Node *node);
+void *find_node(Node *root, char *path);
+void *search_value(Node *node, char *value);
+
+void printTabs(int count);
+void printTreeRecursive(Node *node, int level);
+
 
 void handle_command_help();
 void handle_command_set(Node *root);
+void handle_command_print(Node *root);
+void handle_command_find(Node *root);
+
+void handle_command_search(Node *root);
 
 #endif
