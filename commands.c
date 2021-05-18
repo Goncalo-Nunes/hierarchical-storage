@@ -16,17 +16,16 @@ void handle_command_help() {
 
 void handle_command_set(Node *root) {
     Node *node;
-    char *path = read_input(NO_SPACING);
-    char *value;
+    char buf[BUF_SIZE]; 
 
-    node = create_node_with_path(root, path);
+    scanf(ARGS_FORMAT_NO_SPACING, buf);
+
+    node = create_node_with_path(root, buf);
 
     /* Set the value of the node's directory value to the one inserted by the user. */
-    value = read_input(SPACING);
-    node->directory = change_directory_value(node->directory, value);
+    scanf(ARGS_FORMAT_SPACING, buf);
+    node->directory = change_directory_value(node->directory, buf);
 
-    free(path);
-    free(value);
 }
 
 
@@ -39,7 +38,9 @@ void handle_command_print(Node *root) {
 
 void handle_command_find(Node *root) {
     Node *node;
-    char *path = read_input(NO_SPACING);
+    char path[BUF_SIZE];
+
+    scanf(ARGS_FORMAT_NO_SPACING, path);
 
     node = find_node(root, path);
 
@@ -53,15 +54,54 @@ void handle_command_find(Node *root) {
 
 
 
+
+void handle_command_list(Node *root) {
+    char path[BUF_SIZE], **nameArray;
+    Node *node;
+    int i, childrenCount;
+
+    if (peek_nonspace() == '\n')
+        node = root;
+    else {
+        scanf(ARGS_FORMAT_NO_SPACING, path);
+        node = find_node(root, path);
+        if (node == NULL)
+            return;
+    }
+    
+    childrenCount = count_children(node);
+    nameArray = malloc(childrenCount * sizeof(char*));
+    node = node->firstChild;
+
+    for (i = 0; i < childrenCount; i++) {
+        nameArray[i] = malloc((strlen(node->directory.name) + 1) * sizeof(char));
+        strcpy(nameArray[i], node->directory.name);
+        node = node->nextSibling;
+    }
+
+    quick_sort(nameArray, 0, childrenCount-1);
+
+    for (i = 0; i < childrenCount; i++) {
+        puts(nameArray[i]);
+        free(nameArray[i]);
+    }
+
+   free(nameArray); 
+}
+
+
+
 void handle_command_search(Node *root) {
     Node *node;
-    char *value = read_input(SPACING);
+    char value[BUF_SIZE];
+
+    scanf(ARGS_FORMAT_SPACING, value);
 
     node = search_value(root, value);
 
     if (node == NULL)
         puts(ERROR_NOT_FOUND);
     else 
-        puts(node->directory.name);
-    
+        puts(node->directory.path);
+
 }

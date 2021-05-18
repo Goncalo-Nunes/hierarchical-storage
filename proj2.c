@@ -8,9 +8,11 @@
 
 int main() {
 
-    char *command = read_input(NO_SPACING);
+    char command[BUF_SIZE];
     Node *root = init_tree();
     
+    scanf(ARGS_FORMAT_NO_SPACING, command);
+
     while (strcmp(command, COMMAND_QUIT)) {
  
         if (strcmp(command, COMMAND_HELP) == 0)
@@ -26,7 +28,7 @@ int main() {
             handle_command_find(root);
 
         else if (strcmp(command, COMMAND_LIST) == 0)
-            break;
+            handle_command_list(root);
 
         else if (strcmp(command, COMMAND_SEARCH) == 0)
             handle_command_search(root);
@@ -34,11 +36,10 @@ int main() {
         else if (strcmp(command, COMMAND_DELETE) == 0)
             break;
 
-        free(command);
-        command = read_input(NO_SPACING);
+        peek_nonspace();
+        scanf(ARGS_FORMAT_NO_SPACING, command);
     }
 
-    free(command);
 
     return 0;
 }

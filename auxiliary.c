@@ -38,7 +38,7 @@ char *read_input(char end_char) {
 indicating that there is no memory available and exits the program. */
 void check_memory(void *memory) {
     if (memory == NULL) {
-        printf("%s", "no memory");
+        puts(ERROR_NO_MEMORY);
         exit(137);
     }
 }
@@ -61,3 +61,11 @@ void clear_line() {
     while((c = getchar()) != '\n' && c != ' ');
 }
 
+
+char peek_nonspace() {
+	char c;
+
+	while ((c = getchar()) == ' ');
+	ungetc(c, stdin);
+	return c;
+}

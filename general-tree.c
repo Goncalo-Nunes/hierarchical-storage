@@ -5,7 +5,7 @@ Node *init_tree() {
     Directory directory;
     Node *node;
 
-    directory = initialize_directory(directory, "/", "\0");
+    directory = initialize_directory(directory, "/",  "\0", "\0");
 
     return node = new_node(directory);
 }
@@ -92,7 +92,7 @@ void *create_node_with_path(Node *root, char *path) {
     Node *node = root;
     Node *tempNode;
     Directory directory;
-    char *word, res_path[65535];
+    char *word, res_path[BUF_SIZE];
     strcpy(res_path, "\0");
 
     word = strtok(path, "/");
@@ -100,13 +100,12 @@ void *create_node_with_path(Node *root, char *path) {
     while (word != NULL) {
         strcat(res_path, "/");
         strcat(res_path, word);
-        if ((tempNode = word_is_in_children(node, res_path)) != NULL)
+        if ((tempNode = word_is_in_children(node, word)) != NULL)
             node = tempNode;
         
         else {
-            directory = initialize_directory(directory, res_path, "\0");
+            directory = initialize_directory(directory, word, res_path, "\0");
             node = insert_child(node, directory);
-
         }
 
         word = strtok(NULL, "/");
@@ -118,11 +117,10 @@ void *create_node_with_path(Node *root, char *path) {
 
 
 void print_nodes_with_value(Node *node) {
-
     while (node != NULL) {        
         /* If the node has a value, print the node */
         if (node->directory.value[0] != '\0')
-            printf("%s %s\n", node->directory.name, node->directory.value);
+            printf("%s %s\n", node->directory.path, node->directory.value);
 
         if (node->firstChild != NULL)
             print_nodes_with_value(node->firstChild);
@@ -134,7 +132,7 @@ void print_nodes_with_value(Node *node) {
 
 void *find_node(Node *root, char *path) {
     Node *node = root;
-    char *word, res_path[65535];
+    char *word, res_path[BUF_SIZE];
     strcpy(res_path, "\0");
 
     word = strtok(path, "/");
@@ -143,7 +141,7 @@ void *find_node(Node *root, char *path) {
         strcat(res_path, "/");
         strcat(res_path, word);
 
-        node = word_is_in_children(node, res_path);
+        node = word_is_in_children(node, word);
 
         if (node == NULL) {
             puts(ERROR_NOT_FOUND);
@@ -156,12 +154,18 @@ void *find_node(Node *root, char *path) {
 }
 
 
+int count_children(Node *node) {
+    int count = 0;
 
+    node = node->firstChild;
+    
+    while (node != NULL) {
+        count++;
+        node = node->nextSibling;
+    }
 
-
-
-
-
+    return count;
+}
 
 
 void *search_value(Node *node, char *value) {
@@ -182,7 +186,6 @@ void *search_value(Node *node, char *value) {
     if (node->nextSibling != NULL)
         ret = search_value(node->nextSibling, value);
 
-    
     return ret;
 }
 
@@ -212,7 +215,7 @@ void *search_value(Node *node, char *value) {
 
 
 
-
+/*------------------------- DEBUGGING ------------------------- */
 void printTabs(int count)
 {
     int i = 0;
