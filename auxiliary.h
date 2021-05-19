@@ -19,6 +19,7 @@ indicating that spaces are not allowed. */
 #define CHAR_FOUND 1
 
 #define BUF_SIZE 65536
+#define COMMAND_BUF_SIZE 21
 
 #define COMMAND_HELP "help" /* Command 'Help' string */
 #define COMMAND_QUIT "quit" /* Command 'Quit' string */
@@ -82,12 +83,12 @@ void clear_line();
 char *concatenate(const char *string1, const char *string2);
 char peek_nonspace();
 
-
 Directory initialize_directory_name(Directory directory, char *name);
 Directory initialize_directory_path(Directory directory, char *path);
 Directory initialize_directory_value(Directory directory, char *value);
 Directory initialize_directory(Directory directory, char *name, char *path, char *value);
 Directory change_directory_value(Directory directory, char *value);
+void free_directory(Directory directory);
 
 Node *init_tree();
 Node *new_node(Directory directory);
@@ -99,6 +100,8 @@ void print_nodes_with_value(Node *node);
 void *find_node(Node *root, char *path);
 int count_children(Node *node);
 void *search_value(Node *node, char *value);
+void free_node(Node *node);
+Node *delete_branch(Node *node);
 
 int less(char *s1, char *s2);
 void exch(char **s1_ptr, char **s2_ptr);
@@ -109,12 +112,12 @@ void quick_sort(char **string, int l, int r);
 void printTabs(int count);
 void printTreeRecursive(Node *node, int level);
 
-
 void handle_command_help();
 void handle_command_set(Node *root);
 void handle_command_print(Node *root);
 void handle_command_find(Node *root);
 void handle_command_list(Node *root);
 void handle_command_search(Node *root);
+void handle_command_delete(Node *root);
 
 #endif

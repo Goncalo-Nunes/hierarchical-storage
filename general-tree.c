@@ -213,6 +213,24 @@ void *search_value(Node *node, char *value) {
 */
 
 
+void free_node(Node *node) {
+    free_directory(node->directory);
+    free(node);
+}
+
+
+Node *delete_branch(Node *node) {
+    Node *newChild = NULL;
+    if (node != NULL) {
+        while(node->firstChild != NULL)
+            node->firstChild = delete_branch(node->firstChild);
+
+        newChild = node->nextSibling;
+        free_node(node);
+    }
+    return newChild;
+}
+
 
 
 /*------------------------- DEBUGGING ------------------------- */

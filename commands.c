@@ -58,7 +58,7 @@ void handle_command_find(Node *root) {
 void handle_command_list(Node *root) {
     char path[BUF_SIZE], **nameArray;
     Node *node;
-    int i, childrenCount;
+    int i = 0, childrenCount;
 
     if (peek_nonspace() == '\n')
         node = root;
@@ -70,13 +70,18 @@ void handle_command_list(Node *root) {
     }
     
     childrenCount = count_children(node);
-    nameArray = malloc(childrenCount * sizeof(char*));
+    nameArray = (char **)malloc(childrenCount * sizeof(char*));
     node = node->firstChild;
+    if (node == NULL) {
+        free(nameArray);
+        return;
+    }
 
-    for (i = 0; i < childrenCount; i++) {
-        nameArray[i] = malloc((strlen(node->directory.name) + 1) * sizeof(char));
+    while(node != NULL) {
+        nameArray[i] = (char *)malloc((strlen(node->directory.name) + 1) * sizeof(char));
         strcpy(nameArray[i], node->directory.name);
         node = node->nextSibling;
+        i++;
     }
 
     quick_sort(nameArray, 0, childrenCount-1);
@@ -104,4 +109,22 @@ void handle_command_search(Node *root) {
     else 
         puts(node->directory.path);
 
+}
+
+
+void handle_command_delete(Node *root) {
+    Node *node;
+    char path[BUF_SIZE];
+
+    if (peek_nonspace() == '\n')
+        node = root;
+    else {
+        scanf(ARGS_FORMAT_NO_SPACING, path);
+        node = find_node(root, path);
+        if (node == NULL)
+            return;
+    }
+    
+    node->firstChild = delete_branch(node);
+    printTreeRecursive(root, 0);
 }

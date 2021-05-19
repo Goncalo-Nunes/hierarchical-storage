@@ -24,15 +24,17 @@ void exch(char **s1_ptr, char **s2_ptr)
 /* Implementation of insertion sort to sort the given array */
 void insertion_sort(char **string, int l, int r) {
     int i, j;
-    char v[BUF_SIZE];
+    char v[BUF_SIZE] = {0};
 
     for (i = l+1; i <= r; i++) {
         strcpy(v, string[i]);
         j = i-1;
         while(j >= l && less(v, string[j])) {
-            strcpy(string[j+1], string[j]);
+            string[j+1] = realloc(string[j+1], (strlen(string[j]) + 1) * sizeof(char));
+            strcpy(string[j+1], string[j]); 
             j--;
         }
+        string[j+1] = realloc(string[j+1], (strlen(v) + 1) * sizeof(char));
         strcpy(string[j+1], v);
     }
 }
@@ -42,12 +44,7 @@ void insertion_sort(char **string, int l, int r) {
 int partition(char **string, int l, int r) {
     int i = l-1;
     int j = r;
-    int mid = l+(r-l)/2;
-    char v[BUF_SIZE];
-
-    if (less(string[mid], string[l])) exch(&string[mid], &string[l]);
-    if (less(string[mid], string[r])) exch(&string[mid], &string[r]); /* string[mid] is higher */
-    if (less(string[r], string[l])) exch(&string[r], &string[l]);
+    char v[BUF_SIZE] = {0};
     strcpy(v, string[r]);
 
     while (i < j) {

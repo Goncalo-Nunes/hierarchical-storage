@@ -8,7 +8,7 @@
 
 int main() {
 
-    char command[BUF_SIZE];
+    char command[COMMAND_BUF_SIZE];
     Node *root = init_tree();
     
     scanf(ARGS_FORMAT_NO_SPACING, command);
@@ -34,12 +34,12 @@ int main() {
             handle_command_search(root);
         
         else if (strcmp(command, COMMAND_DELETE) == 0)
-            break;
+             handle_command_delete(root);
 
         peek_nonspace();
         scanf(ARGS_FORMAT_NO_SPACING, command);
     }
 
-
+    delete_branch(root);
     return 0;
 }

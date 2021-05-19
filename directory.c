@@ -43,3 +43,10 @@ Directory change_directory_value(Directory directory, char *value) {
 
     return directory;
 }
+
+
+void free_directory(Directory directory) {
+    free(directory.name);
+    free(directory.path);
+    free(directory.value);
+}
