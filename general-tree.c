@@ -18,6 +18,8 @@ Node *new_node(Directory directory) {
 
     newNode->nextSibling = NULL;
     newNode->firstChild = NULL;
+    newNode->parent = NULL;
+    newNode->previousSibling = NULL;
     newNode->directory = directory;
 
     return newNode;
@@ -36,6 +38,8 @@ Node *insert_sibling(Node *node, Directory directory) {
         tempNode = tempNode->nextSibling;
 
     tempNode->nextSibling = newNode;
+    newNode->previousSibling = tempNode;
+    newNode->parent = tempNode->parent;
 
     return newNode;
 }
@@ -50,6 +54,7 @@ Node *insert_child(Node *node, Directory directory) {
     } else {
         newNode = new_node(directory);
         node->firstChild = newNode;
+        newNode->parent = node;
     }
 
     return newNode;
@@ -133,8 +138,8 @@ void print_nodes_with_value(Node *node) {
 void *find_node(Node *root, char *path) {
     Node *node = root;
     char *word, res_path[BUF_SIZE];
-    strcpy(res_path, "\0");
 
+    strcpy(res_path, "\0");
     word = strtok(path, "/");
 
     while (word != NULL) {
@@ -145,6 +150,7 @@ void *find_node(Node *root, char *path) {
 
         if (node == NULL) {
             puts(ERROR_NOT_FOUND);
+            return node;
         }
 
         word = strtok(NULL, "/");
@@ -219,6 +225,28 @@ void free_node(Node *node) {
 }
 
 
+void delete_node(Node *node) {
+    if (node->previousSibling == NULL) {
+        
+        node->parent->firstChild = node->nextSibling;
+
+        if (node->nextSibling != NULL) {
+
+            node->nextSibling->previousSibling = NULL;
+            node->nextSibling->parent = node->parent;
+        }
+    }
+    else if (node->nextSibling == NULL && node->previousSibling != NULL)
+        node->previousSibling->nextSibling = NULL;
+
+    else if(node->previousSibling != NULL)
+        node->previousSibling->nextSibling = node->nextSibling;
+
+
+    delete_branch(node);
+}
+
+
 Node *delete_branch(Node *node) {
     Node *newChild = NULL;
     if (node != NULL) {
@@ -230,6 +258,7 @@ Node *delete_branch(Node *node) {
     }
     return newChild;
 }
+
 
 
 

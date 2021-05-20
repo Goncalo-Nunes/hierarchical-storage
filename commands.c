@@ -116,15 +116,20 @@ void handle_command_delete(Node *root) {
     Node *node;
     char path[BUF_SIZE];
 
-    if (peek_nonspace() == '\n')
-        node = root;
-    else {
-        scanf(ARGS_FORMAT_NO_SPACING, path);
-        node = find_node(root, path);
-        if (node == NULL)
-            return;
-    }
+    if (peek_nonspace() == '\n') {
+        if (root->firstChild != NULL) {
+            delete_node(root->firstChild);
+            root->firstChild = NULL;
+        }
+        return;
+    }    
     
-    node->firstChild = delete_branch(node);
-    printTreeRecursive(root, 0);
+    scanf(ARGS_FORMAT_NO_SPACING, path);
+    node = find_node(root, path);
+    if (node == NULL)
+        return;
+   
+    
+    delete_node(node);
+    /*  printTreeRecursive(root, 0); */
 }

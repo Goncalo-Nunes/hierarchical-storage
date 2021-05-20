@@ -61,8 +61,10 @@ typedef struct Directory {
 
 typedef struct Node {
     Directory directory;
+    struct Node *parent;
     struct Node *firstChild;
     struct Node *nextSibling;
+    struct Node *previousSibling;
 } Node;
 
 
@@ -101,6 +103,7 @@ void *find_node(Node *root, char *path);
 int count_children(Node *node);
 void *search_value(Node *node, char *value);
 void free_node(Node *node);
+void delete_node(Node *node);
 Node *delete_branch(Node *node);
 
 int less(char *s1, char *s2);
