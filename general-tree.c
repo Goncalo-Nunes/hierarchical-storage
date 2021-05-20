@@ -246,7 +246,7 @@ void delete_node(Node *node) {
     delete_branch(node);
 }
 
-
+/* Delete the node's children */
 void delete_children(Node *node) {
     Node *child = node->firstChild;
     Node *temp;
@@ -257,6 +257,7 @@ void delete_children(Node *node) {
         child = temp;
     }
 }
+
 
 
 Node *delete_branch(Node *node) {
