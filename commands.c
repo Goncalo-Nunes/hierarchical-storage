@@ -117,10 +117,7 @@ void handle_command_delete(Node *root) {
     char path[BUF_SIZE];
 
     if (peek_nonspace() == '\n') {
-        if (root->firstChild != NULL) {
-            delete_node(root->firstChild);
-            root->firstChild = NULL;
-        }
+        delete_children(root);
         return;
     }    
     

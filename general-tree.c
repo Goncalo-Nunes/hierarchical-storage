@@ -247,6 +247,18 @@ void delete_node(Node *node) {
 }
 
 
+void delete_children(Node *node) {
+    Node *child = node->firstChild;
+    Node *temp;
+
+    while (child != NULL) {
+        temp = child->nextSibling;
+        delete_node(child);
+        child = temp;
+    }
+}
+
+
 Node *delete_branch(Node *node) {
     Node *newChild = NULL;
     if (node != NULL) {

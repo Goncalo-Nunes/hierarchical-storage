@@ -104,6 +104,7 @@ int count_children(Node *node);
 void *search_value(Node *node, char *value);
 void free_node(Node *node);
 void delete_node(Node *node);
+void delete_children(Node *node);
 Node *delete_branch(Node *node);
 
 int less(char *s1, char *s2);
