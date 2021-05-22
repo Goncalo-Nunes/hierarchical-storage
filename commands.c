@@ -71,11 +71,12 @@ void handle_command_list(Node *root) {
     
     childrenCount = count_children(node);
     nameArray = (char **)malloc(childrenCount * sizeof(char*));
-    node = node->firstChild;
     if (node == NULL) {
         free(nameArray);
         return;
     }
+
+    node = node->firstChild;
 
     while(node != NULL) {
         nameArray[i] = (char *)malloc((strlen(node->directory.name) + 1) * sizeof(char));
@@ -118,6 +119,7 @@ void handle_command_delete(Node *root) {
 
     if (peek_nonspace() == '\n') {
         delete_children(root);
+        root->firstChild = NULL;
         return;
     }    
     
@@ -126,7 +128,5 @@ void handle_command_delete(Node *root) {
     if (node == NULL)
         return;
    
-    
     delete_node(node);
-    /*  printTreeRecursive(root, 0); */
 }

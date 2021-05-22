@@ -121,6 +121,8 @@ void *create_node_with_path(Node *root, char *path) {
 
 
 
+
+
 void print_nodes_with_value(Node *node) {
     while (node != NULL) {        
         /* If the node has a value, print the node */
@@ -177,83 +179,87 @@ int count_children(Node *node) {
 void *search_value(Node *node, char *value) {
     Node *ret = NULL;
 
-
-    if (strcmp(node->directory.value, value) == 0) {
-        return node;
+    if (node != NULL) {
+        if (strcmp(node->directory.value, value) == 0)
+            return node;
+        
+        if (node->firstChild != NULL) 
+            ret = search_value(node->firstChild, value);
+        
+        if (ret != NULL) 
+            return ret;
+        
+        if (node->nextSibling != NULL)
+            ret = search_value(node->nextSibling, value);
     }
-
-    if (node->firstChild != NULL) 
-        ret = search_value(node->firstChild, value);
-    
-    if (ret != NULL) {
-        return ret;
-    }
-
-    if (node->nextSibling != NULL)
-        ret = search_value(node->nextSibling, value);
-
     return ret;
 }
 
 
 
 
-/*
-void *search_value(Node *node, char *value) {
-    while (node != NULL) {        
-        printf("node value: %s\n", node->directory.value);
-        printf("value: %s\n", value);
-        if (strcmp(node->directory.value, value) == 0) {
-            puts("FOUND!");
-            break;
-        }
-        if (node->firstChild != NULL)
-            search_value(node->firstChild, value);
-
-        node = node->nextSibling;
-    }
-
-
-    return node;
-}
-*/
-
-
 void free_node(Node *node) {
-    free_directory(node->directory);
-    free(node);
+    if (node != NULL) {
+        free_directory(node->directory);
+        free(node);
+    } 
 }
 
 
 void delete_node(Node *node) {
-    if (node->previousSibling == NULL) {
-        
-        node->parent->firstChild = node->nextSibling;
+    /*
+    if (node != NULL) {
+        if (node->previousSibling == NULL) {
+            
+            node->parent->firstChild = node->nextSibling;
 
-        if (node->nextSibling != NULL) {
+            if (node->nextSibling != NULL) {
 
-            node->nextSibling->previousSibling = NULL;
-            node->nextSibling->parent = node->parent;
+                node->nextSibling->previousSibling = NULL;
+                node->nextSibling->parent = node->parent;
+            }
         }
-    }
-    else if (node->nextSibling == NULL && node->previousSibling != NULL)
+        else if(node->previousSibling != NULL)
+            node->previousSibling->nextSibling = node->nextSibling;
+    */
+
+    if (node == NULL)
+        return;
+
+
+    /* Node is the only child */
+    if (node->previousSibling == NULL && node->nextSibling == NULL) {
+        node->parent->firstChild = NULL;
+
+    /* Node is the first child */
+    } else if (node->previousSibling == NULL) {
+        node->parent->firstChild = node->nextSibling;
+        node->nextSibling->previousSibling = NULL;
+
+    /* Node is the last child */
+    } else if (node->nextSibling == NULL) {
         node->previousSibling->nextSibling = NULL;
 
-    else if(node->previousSibling != NULL)
+    /* Node is middle child */
+    } else {
         node->previousSibling->nextSibling = node->nextSibling;
-
+        node->nextSibling->previousSibling = node->previousSibling;
+    }
 
     delete_branch(node);
 }
 
 /* Delete the node's children */
 void delete_children(Node *node) {
-    Node *child = node->firstChild;
+    Node *child = NULL;
     Node *temp;
+
+    if (node != NULL) 
+        child = node->firstChild;
 
     while (child != NULL) {
         temp = child->nextSibling;
-        delete_node(child);
+        delete_branch(child);
         child = temp;
     }
 }

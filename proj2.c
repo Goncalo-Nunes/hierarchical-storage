@@ -22,19 +22,19 @@ int main() {
             handle_command_set(root);
 
         else if (strcmp(command, COMMAND_PRINT) == 0)
-            handle_command_print(root);
+           handle_command_print(root);
 
         else if (strcmp(command, COMMAND_FIND) == 0)
             handle_command_find(root);
 
         else if (strcmp(command, COMMAND_LIST) == 0)
-            handle_command_list(root);
+           handle_command_list(root);
 
         else if (strcmp(command, COMMAND_SEARCH) == 0)
             handle_command_search(root);
         
         else if (strcmp(command, COMMAND_DELETE) == 0)
-             handle_command_delete(root);
+            handle_command_delete(root);
 
         peek_nonspace();
         scanf(ARGS_FORMAT_NO_SPACING, command);

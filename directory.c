@@ -46,7 +46,10 @@ Directory change_directory_value(Directory directory, char *value) {
 
 
 void free_directory(Directory directory) {
-    free(directory.name);
-    free(directory.path);
-    free(directory.value);
+    if (directory.name != NULL)
+        free(directory.name);
+    if (directory.path != NULL)
+        free(directory.path);
+    if (directory.value != NULL)
+        free(directory.value);
 }
