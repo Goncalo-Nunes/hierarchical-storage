@@ -1,9 +1,16 @@
+/*
+ * File:  sorting.c
+ * Author:  Gonçalo Nunes (99074)
+ * Description: Sorting algorithms and auxiliary functions.
+*/
+
+
 #include "auxiliary.h"
 
 
-/* Compares two Tasks and returns True if the first Task's start_time is lower then the other
-or in case they are equal, returns True if the first Task description is first in alphabetical order then the second.
-Returns False in any other case. */
+/* Compares two strings and returns TRUE if the first string is alphabeticaly 
+ * lower than the second one. Returns FALSE otherwise.
+*/
 int less(char *s1, char *s2) {
     if (strcmp(s1, s2) < 0)
         return TRUE;
@@ -12,7 +19,7 @@ int less(char *s1, char *s2) {
 }
 
 
-/* Swaps strings by swapping pointers */ 
+/* Swaps strings by swapping pointers. */ 
 void exch(char **s1_ptr, char **s2_ptr)
 {
   char *temp = *s1_ptr;
@@ -21,21 +28,21 @@ void exch(char **s1_ptr, char **s2_ptr)
 }  
 
 
-/* Implementation of insertion sort to sort the given array */
-void insertion_sort(char **string, int l, int r) {
+/* Implementation of insertion sort to sort the given array. */
+void insertion_sort(char **str, int l, int r) {
     int i, j;
     char v[BUF_SIZE] = {0};
 
     for (i = l+1; i <= r; i++) {
-        strcpy(v, string[i]);
+        strcpy(v, str[i]);
         j = i-1;
-        while(j >= l && less(v, string[j])) {
-            string[j+1] = realloc(string[j+1], (strlen(string[j]) + 1) * sizeof(char));
-            strcpy(string[j+1], string[j]); 
+        while(j >= l && less(v, str[j])) {
+            str[j+1] = realloc(str[j+1], (strlen(str[j]) + 1) * sizeof(char));
+            strcpy(str[j+1], str[j]); 
             j--;
         }
-        string[j+1] = realloc(string[j+1], (strlen(v) + 1) * sizeof(char));
-        strcpy(string[j+1], v);
+        str[j+1] = realloc(str[j+1], (strlen(v) + 1) * sizeof(char));
+        strcpy(str[j+1], v);
     }
 }
 
@@ -61,8 +68,8 @@ int partition(char **string, int l, int r) {
 
 
 /* Implementation of quick sort algorithm to sort 
-the given array of tasks by their start time as the primary criteria 
-and their alphabetical order as the secondery criteria.  */
+ * the given array of strings by alphabetical order.
+*/
 void quick_sort(char **string, int l, int r) {
     int i;
 

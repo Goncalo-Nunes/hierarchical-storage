@@ -1,6 +1,14 @@
+/*
+ * File:  proj2.c
+ * Author:  Gonçalo Nunes (99074)
+ * Description: Contains the functions that handle the commands inserted by the user.
+*/
+
+
 #include "auxiliary.h"
 
 
+/* Handles the help command. Prints all commands available and their description. */
 void handle_command_help() {
     puts(COMMAND_HELP ": " COMMAND_HELP_DESCRIPTION);
     puts(COMMAND_QUIT ": " COMMAND_QUIT_DESCRIPTION);
@@ -13,7 +21,10 @@ void handle_command_help() {
 }
 
 
-
+/* Handles the set command. Creates a new directory if the one inserted 
+ * by the user does not exist yet. Otherwise, changes the directory value to 
+ * the one chosen by the user. 
+*/
 void handle_command_set(Node *root) {
     Node *node;
     char buf[BUF_SIZE]; 
@@ -29,23 +40,28 @@ void handle_command_set(Node *root) {
 }
 
 
-
+/* Handles the print command. Prints all nodes with a value 
+* The traversal is in Pre-Order
+*/
 void handle_command_print(Node *root) {
     print_nodes_with_value(root);
 }
 
 
-
+/* Handles the find command.
+ * Prints the value of the directory inserted by the user.
+*/
 void handle_command_find(Node *root) {
     Node *node;
     char path[BUF_SIZE];
 
     scanf(ARGS_FORMAT_NO_SPACING, path);
 
-    node = find_node(root, path);
+    node = find_node(root, path); /* Finds the node with the given path. */
 
     if(node != NULL) {
-        if (node->directory.value[0] == '\0')
+        /* Check if node has a value. */
+        if (node->directory.value[0] == '\0') 
             puts(ERROR_NO_DATA);
         else
             puts(node->directory.value);
@@ -53,13 +69,15 @@ void handle_command_find(Node *root) {
 } 
 
 
-
-
+/* Handles the list command. Gets all the direct components of a given path
+ * and prints them in alphabetical order.
+*/
 void handle_command_list(Node *root) {
     char path[BUF_SIZE], **nameArray;
     Node *node;
     int i = 0, childrenCount;
 
+    /* Check if the command has arguments or not. */
     if (peek_nonspace() == '\n')
         node = root;
     else {
@@ -69,34 +87,37 @@ void handle_command_list(Node *root) {
             return;
     }
     
-    childrenCount = count_children(node);
-    nameArray = (char **)malloc(childrenCount * sizeof(char*));
-    if (node == NULL) {
-        free(nameArray);
-        return;
-    }
-
+    /* Count the node's children. */
+    childrenCount = count_children(node); 
+    /* Allocate space for the names of the children directories. */
+    nameArray = (char **)safe_malloc(childrenCount * sizeof(char*)); 
     node = node->firstChild;
 
     while(node != NULL) {
-        nameArray[i] = (char *)malloc((strlen(node->directory.name) + 1) * sizeof(char));
+        /* Allocate space for the child name. */
+        nameArray[i] = (char *)safe_malloc((strlen(node->directory.name) + 1) * sizeof(char));
+        /* Copy the directory name to the newly allocated memory. */
         strcpy(nameArray[i], node->directory.name);
         node = node->nextSibling;
         i++;
     }
 
+    /* Use the quicksort algorithm to sort the array of names. */
     quick_sort(nameArray, 0, childrenCount-1);
 
+    /* Loops through the sorted array to print and free the names. */
     for (i = 0; i < childrenCount; i++) {
         puts(nameArray[i]);
         free(nameArray[i]);
     }
 
-   free(nameArray); 
+   free(nameArray); /* Free the array */
 }
 
 
-
+/* Handles the search command. Finds the directory with the given value 
+ * and prints the directory path.
+*/
 void handle_command_search(Node *root) {
     Node *node;
     char value[BUF_SIZE];
@@ -105,21 +126,28 @@ void handle_command_search(Node *root) {
 
     node = search_value(root, value);
 
+    /* Check if the directory was found or not. */
     if (node == NULL)
         puts(ERROR_NOT_FOUND);
-    else 
+    else {
         puts(node->directory.path);
-
+    }
 }
 
 
+/* Handles the delete command. Deletes the directory with the given path
+ * as well as it's sub-directories. If no arguments are provided, 
+ * all directories are deleted.
+*/
 void handle_command_delete(Node *root) {
     Node *node;
     char path[BUF_SIZE];
 
+    /* If thera are no arguments, delete all directories */
     if (peek_nonspace() == '\n') {
-        delete_children(root);
-        root->firstChild = NULL;
+        delete_children(root); /* Delete the root's children. */ 
+        /* As a consequence, the root now has no children. */
+        root->firstChild = NULL; 
         return;
     }    
     
@@ -127,6 +155,7 @@ void handle_command_delete(Node *root) {
     node = find_node(root, path);
     if (node == NULL)
         return;
-   
-    delete_node(node);
+
+    /* If the given path was found, we delete it's node. */
+    delete_node(node); 
 }

@@ -1,6 +1,14 @@
+/*
+ * File:  general-tree.c
+ * Author:  Gonçalo Nunes (99074)
+ * Description: Functions to manipulate a n-ary tree.
+*/
+
+
 #include "auxiliary.h"
 
 
+/* Initializes the n-ary tree. Returns a pointer to the tree's root. */
 Node *init_tree() {
     Directory directory;
     Node *node;
@@ -11,11 +19,15 @@ Node *init_tree() {
 }
 
 
-
+/* Creates a new node with the given directory. 
+ * Returns a pointer to the newly created node.
+*/
 Node *new_node(Directory directory) {
-    Node *newNode = malloc(sizeof(Node));
-    check_memory(newNode);
 
+    /* Allocates space for the node */
+    Node *newNode = (Node *)safe_malloc(sizeof(Node));
+
+    /* Initializes the node's components. */
     newNode->nextSibling = NULL;
     newNode->firstChild = NULL;
     newNode->parent = NULL;
@@ -26,17 +38,20 @@ Node *new_node(Directory directory) {
 }
 
 
-
+/* Creates a new node and sets it has being a sibling of the 
+ * given node. This new node is added has being the youngest sibling, which
+ * means it is added to the end of the sibling list. 
+ * Returns a pointer to the newly created sibling node.
+*/
 Node *insert_sibling(Node *node, Directory directory) {
     Node *newNode = new_node(directory);
     Node *tempNode = node;
 
-    newNode->directory = directory;
-    newNode->nextSibling = NULL;
-
+    /* Go to the end of the sibling list. */
     while (tempNode != NULL && tempNode->nextSibling != NULL)
         tempNode = tempNode->nextSibling;
 
+    /* Set up the new node has being the youngest sibling */
     tempNode->nextSibling = newNode;
     newNode->previousSibling = tempNode;
     newNode->parent = tempNode->parent;
@@ -45,13 +60,18 @@ Node *insert_sibling(Node *node, Directory directory) {
 }
 
 
-
+/* Creates a new node and set's it has being a child of the given node. 
+ * Returns a pointer to the newly created node.
+*/
 Node *insert_child(Node *node, Directory directory) {
     Node *newNode;
 
     if (node->firstChild != NULL) {
+        /* if the given node already has children,
+         we create a sibling to the given node's first child. */
         newNode = insert_sibling(node->firstChild, directory);
     } else {
+        /* If the given node does not have children we create the first child. */
         newNode = new_node(directory);
         node->firstChild = newNode;
         newNode->parent = node;
@@ -61,54 +81,50 @@ Node *insert_child(Node *node, Directory directory) {
 }
 
 
-void print_tree(Node *tree)
-{
-	if((tree->firstChild) != NULL){
-		fprintf(stderr, "%s->", tree->directory.name);
-		print_tree(tree->firstChild);
-	}
-	if((tree->nextSibling) != NULL){
-		fprintf(stderr, "%s", tree->directory.name);
-		fprintf(stderr, "\n%s--", tree->directory.name);
-		print_tree(tree->nextSibling);
-	}
-    if(!(tree->firstChild) && !(tree->nextSibling)){
-		fprintf(stderr, "%s", tree->directory.name);
-	}
-}
 
-
-void *word_is_in_children(Node *node, char *word) {
+/* Checks if the given name is in any of the nodes' directory names.
+ * Returns the node which has the given name. If the node with that name
+ * does not exist, returns NULL.
+*/
+void *name_is_in_children(Node *node, char *name) {
     Node *children = node->firstChild;
 
+    /* Loops through the child nodes. */
     while (children != NULL) {
-        if (strcmp(children->directory.name, word) == 0) {
+        /* Check if the name matches. */
+        if (strcmp(children->directory.name, name) == 0) {
             return children;
         }
 
         children = children->nextSibling;
     }
 
-    return NULL; /* The word was not found in the nodes*/
+    return NULL; /* The name was not found in the nodes*/
 }
 
 
-void *create_node_with_path(Node *root, char *path) {
+/* Creates a node with the given path and all other nodes that are needed to
+ * reach that path. Returns a pointer to the newly created node.
+*/
+Node *create_node_with_path(Node *root, char *path) {
     Node *node = root;
     Node *tempNode;
     Directory directory;
     char *word, res_path[BUF_SIZE];
     strcpy(res_path, "\0");
 
-    word = strtok(path, "/");
+    word = strtok(path, "/"); /* Get the word between the '/'s .*/
 
     while (word != NULL) {
         strcat(res_path, "/");
         strcat(res_path, word);
-        if ((tempNode = word_is_in_children(node, word)) != NULL)
-            node = tempNode;
+
+        /* If the word is in the child nodes we do not have to add a child. */
+        if ((tempNode = name_is_in_children(node, word)) != NULL)
+            node = tempNode; 
         
         else {
+            /* Add a new child to the node. */
             directory = initialize_directory(directory, word, res_path, "\0");
             node = insert_child(node, directory);
         }
@@ -120,15 +136,14 @@ void *create_node_with_path(Node *root, char *path) {
 }
 
 
-
-
-
+/* Prints all the nodes with a value. The traversal is in Pre-Order. */
 void print_nodes_with_value(Node *node) {
     while (node != NULL) {        
         /* If the node has a value, print the node */
         if (node->directory.value[0] != '\0')
             printf("%s %s\n", node->directory.path, node->directory.value);
 
+        /* If the node does not have a value we print an error message. */
         if (node->firstChild != NULL)
             print_nodes_with_value(node->firstChild);
 
@@ -137,19 +152,20 @@ void print_nodes_with_value(Node *node) {
 }
 
 
+/* Finds the node with the given path. Return a pointer to the found node.
+ * If the node does not exist, returns NULL.
+*/
 void *find_node(Node *root, char *path) {
     Node *node = root;
-    char *word, res_path[BUF_SIZE];
+    char *word;
 
-    strcpy(res_path, "\0");
-    word = strtok(path, "/");
+    word = strtok(path, "/"); /* Get the word between the '/'s */
 
     while (word != NULL) {
-        strcat(res_path, "/");
-        strcat(res_path, word);
 
-        node = word_is_in_children(node, word);
+        node = name_is_in_children(node, word); /* Check if the word is in the child nodes. */
 
+        /* If not, we print an error */
         if (node == NULL) {
             puts(ERROR_NOT_FOUND);
             return node;
@@ -162,11 +178,13 @@ void *find_node(Node *root, char *path) {
 }
 
 
+/* Counts the number of children a node has. Returns that count. */
 int count_children(Node *node) {
     int count = 0;
 
     node = node->firstChild;
     
+    /* Loop though the children. */
     while (node != NULL) {
         count++;
         node = node->nextSibling;
@@ -176,28 +194,37 @@ int count_children(Node *node) {
 }
 
 
+/* Searches the tree for the given value. The traversal is in Pre-Order.
+ * Returns a pointer to the node in which the value was found.
+ * If the node was not found, returns NULL.
+*/
 void *search_value(Node *node, char *value) {
-    Node *ret = NULL;
+    Node *temp = NULL;
 
-    if (node != NULL) {
+    /* Loops through the node's siblings. */
+    while (node != NULL) {        
+
+        /* Check if the value is the same. */
         if (strcmp(node->directory.value, value) == 0)
             return node;
+
         
-        if (node->firstChild != NULL) 
-            ret = search_value(node->firstChild, value);
-        
-        if (ret != NULL) 
-            return ret;
-        
-        if (node->nextSibling != NULL)
-            ret = search_value(node->nextSibling, value);
+        if (node->firstChild != NULL)
+            /* Recursive call to find the value in the children. */
+            temp = search_value(node->firstChild, value);
+
+        /* If the value was found we stop the recursion. */
+        if (temp != NULL)  
+            return temp;
+
+        node = node->nextSibling;
     }
-    return ret;
+
+    return NULL;
 }
 
 
-
-
+/* Frees all the memory allocated referent to the given node. */
 void free_node(Node *node) {
     if (node != NULL) {
         free_directory(node->directory);
@@ -206,26 +233,11 @@ void free_node(Node *node) {
 }
 
 
+/* Deletes the given node and it's branches. */
 void delete_node(Node *node) {
-    /*
-    if (node != NULL) {
-        if (node->previousSibling == NULL) {
-            
-            node->parent->firstChild = node->nextSibling;
-
-            if (node->nextSibling != NULL) {
-
-                node->nextSibling->previousSibling = NULL;
-                node->nextSibling->parent = node->parent;
-            }
-        }
-        else if(node->previousSibling != NULL)
-            node->previousSibling->nextSibling = node->nextSibling;
-    */
 
     if (node == NULL)
         return;
-
 
     /* Node is the only child */
     if (node->previousSibling == NULL && node->nextSibling == NULL) {
@@ -249,6 +261,7 @@ void delete_node(Node *node) {
     delete_branch(node);
 }
 
+
 /* Delete the node's children */
 void delete_children(Node *node) {
     Node *child = NULL;
@@ -265,7 +278,7 @@ void delete_children(Node *node) {
 }
 
 
-
+/* Deletes the node and all it's branches. */
 Node *delete_branch(Node *node) {
     Node *newChild = NULL;
     if (node != NULL) {
@@ -276,36 +289,4 @@ Node *delete_branch(Node *node) {
         free_node(node);
     }
     return newChild;
-}
-
-
-
-
-/*------------------------- DEBUGGING ------------------------- */
-void printTabs(int count)
-{
-    int i = 0;
-    for (i = 0; i < count; i++)
-    {
-        putchar('\t');
-    }
-}
-
-
-void printTreeRecursive(Node *node, int level)
-{
-    while (node != NULL)
-    {
-        printTabs(level);
-        printf("Node: %s\n", node->directory.name);
-
-        if (node->firstChild != NULL)
-        {
-            printTabs(level);
-            printf("Children:\n");
-            printTreeRecursive(node->firstChild, level + 1);
-        }
-
-        node = node->nextSibling;
-    }
 }
